@@ -4,6 +4,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\RoleCheckMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,21 +19,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['XSS','auth:sanctum'])->group(function (){
+
+Route::middleware(['XSS','auth:sanctum' ,RoleCheckMiddleware::class . ':admin'])->group(function (){
 
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
-    Route::post("/logout",[\App\Http\Controllers\Api\AuthController::class,'logout']);
     Route::apiResource("/users", UserController::class);
     Route::apiResource("/categories", CategoryController::class);
     Route::apiResource("/items",  ItemController::class);
 });
 
+
+
+Route::post("/logout",[\App\Http\Controllers\Api\AuthController::class,'logout']);
+
 Route::group(['middleware' => ['XSS']], function () {
     Route::post("/signup",[\App\Http\Controllers\Api\AuthController::class,'signup']);
     Route::post("/login",[\App\Http\Controllers\Api\AuthController::class,'login']);
+
+
+
 });
 
 

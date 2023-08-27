@@ -3,32 +3,22 @@ import axiosClient from "../../axios-client.js";
 import { Link } from "react-router-dom";
 import { useStateContext } from "../../context/ContextProvider.jsx";
 
-export default function Users() {
-  const [users, setUsers] = useState([]);
+export default function CategoryList() {
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const { setNotification } = useStateContext();
 
   useEffect(() => {
-    getUsers();
+    fetchCategories();
   }, []);
 
-  const onDeleteClick = (user) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) {
-      return;
-    }
-    axiosClient.delete(`/users/${user.id}`).then(() => {
-      setNotification("User was successfully deleted");
-      getUsers();
-    });
-  };
-
-  const getUsers = () => {
+  const fetchCategories = () => {
     setLoading(true);
     axiosClient
-      .get("/users")
+      .get("/categories")
       .then(({ data }) => {
         setLoading(false);
-        setUsers(data.data);
+        setCategories(data);
       })
       .catch(() => {
         setLoading(false);
@@ -43,20 +33,13 @@ export default function Users() {
           justifyContent: "space-between",
           alignItems: "center",
         }}
-      >
-        <h1>Users</h1>
-        <Link className="btn-add" to="/users/new">
-          Add new
-        </Link>
-      </div>
+      ></div>
       <div className="card animated fadeInDown">
         <table>
           <thead>
             <tr>
               <th>ID</th>
               <th>Name</th>
-              <th>Email</th>
-              <th>Create Date</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -71,16 +54,13 @@ export default function Users() {
           )}
           {!loading && (
             <tbody>
-              {users.map((u) => (
-                <tr key={u.id}>
-                  <td>{u.id}</td>
-                  <td>{u.name}</td>
-                  <td>{u.email}</td>
-                  <td>{u.created_at}</td>
+              {categories.map((category) => (
+                <tr key={category.id}>
+                  <td>{category.id}</td>
+                  <td>{category.category_name}</td>
+
                   <td>
-                    <Link className="btn-edit" to={"/users/" + u.id}>
-                      Edit
-                    </Link>
+                    <button className="btn-edit"> Edit </button>
 
                     <button
                       className="btn-delete"

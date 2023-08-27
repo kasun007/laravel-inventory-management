@@ -19,7 +19,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $data["email"],
             'email' => $data['email'],
-            'password' => bcrypt($data['email'])
+            'password' => bcrypt($data['password'])
 
         ]);
 
@@ -32,6 +32,9 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
+
+        //bypass the validation
+
         $credentials = $request->validated();
         if (!Auth::attempt($credentials)) {
             return response([
@@ -55,3 +58,5 @@ class AuthController extends Controller
 
     }
 }
+
+

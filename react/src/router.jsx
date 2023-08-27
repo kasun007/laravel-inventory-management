@@ -7,6 +7,7 @@ import Users from "./assets/views/Users.jsx";
 import DashboardLayout from "./assets/views/DashboardLayout.jsx";
 import SignUp from "./assets/views/SignUp.jsx";
 import UserForm from "./assets/views/UserForm.jsx";
+import Category from "./assets/views/Category.jsx";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: "/users/:id",
         element: <UserForm key="userUpdate" />,
+      },
+      {
+        path: "/category",
+        element: <Category />,
       },
     ],
   },

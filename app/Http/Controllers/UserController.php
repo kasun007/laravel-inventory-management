@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Interfaces\UserRepositoryInterface;
+
 use App\Http\Requests\StoreRequest;
+
 use App\Http\Requests\UpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -16,6 +21,15 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
+
+    private UserRepositoryInterface $userRepository;
+
+    public function __construct(UserRepositoryInterface $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
+
     public function index()
     {
         return UserResource::collection(User::query()->orderBy('id', 'desc')->paginate(10)); // return the users as a resource collection
@@ -31,7 +45,9 @@ class UserController extends Controller
     {
         $data = $request->validated();  // validated() is a method of FormRequest class
         $data['password'] = bcrypt($data['password']);
-        $user = User::create($data);
+
+
+        $user = $this->userRepository->create($data);
         return \response(new UserResource($user), Response::HTTP_CREATED); // return the user as a resource
 
     }
@@ -40,11 +56,23 @@ class UserController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return UserResource
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
-        return new UserResource(User::findOrFail($id)); // return the user as a resource
+
+        try {
+           return new UserResource($this->userRepository->show($id)); // return the user as a resource
+        } catch (ModelNotFoundException $modelNotFoundException) {
+            return response()->json([
+                'message' => 'User not found'
+            ], status: 404);
+        } catch (Exception $exception) {
+            return response()->json([
+                'message' => 'Something went wrong'
+            ], status: 500);
+        }
+
     }
 
     /**
@@ -52,20 +80,33 @@ class UserController extends Controller
      *
      * @param Request $request
      * @param int $id
-     * @return UserResource
+     * @return UserResource|\Illuminate\Http\JsonResponse
      */
     public function update(UpdateRequest $request, $id)
     {
-        $data = $request->validated(); // validated() is a method of FormRequest class
-        if (isset($data['password'])) {
-            $data['password'] = bcrypt($data['password']);
 
-            $user = User::findOrFail($id);
+
+        try {
+
+            $data = $request->validated(); // validated() is a method of FormRequest class
+            if (isset($data['password'])) {
+                $data['password'] = bcrypt($data['password']);
+                $user = $this->userRepository->show($id);
+            }
+
+            $user = $this->userRepository > update($data);
+            return new UserResource($user); // return the user as a resource
+
+        } catch (ModelNotFoundException $modelNotFoundException) {
+            return response()->json([
+                'message' => 'User not found'
+            ], status: 404);
+        } catch (Exception $exception) {
+            return response()->json([
+                'message' => 'Something went wrong'
+            ], status: 500);
         }
 
-
-        $user->update($data);
-        return  new UserResource($user); // return the user as a resource
     }
 
     /**
@@ -74,10 +115,9 @@ class UserController extends Controller
      * @param int $id
      * @return Response
      */
-    public
-    function destroy($id)
+    public function destroy($id)
     {
-        $user = User::findOrFail($id);
+        $user = $this->userRepository->show($id);
         $user->delete();
         return \response("null", Response::HTTP_NO_CONTENT);
     }
