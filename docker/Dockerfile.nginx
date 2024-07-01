@@ -1,0 +1,10 @@
+FROM nginx:1.23.3
+
+COPY ./templates/ /etc/nginx/templates
+
+WORKDIR /var/www/html
+
+# RUN mkdir /var/www/html
+# CMD [ "mkdir", "/var/www/html" ]
+# CMD [ "chown", "-R", "$USER\":www-data /var/www/html" ]
+# CMD [ "chmod", "-R", "0755", "/var/www/html"]

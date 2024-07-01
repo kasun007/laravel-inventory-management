@@ -1,0 +1,16 @@
+FROM php:8-fpm-bullseye
+
+WORKDIR /var/www/html
+
+RUN  curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN  apt -y update
+RUN  apt -y install git
+RUN  apt -y install libpq-dev
+RUN  docker-php-ext-configure pgsql
+RUN  docker-php-ext-install pdo pdo_pgsql pgsql
+RUN  curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+RUN  apt-get install -y nodejs-legacy
+RUN  npm update -g npm
+RUN  npm install -g yarn
+RUN  apt -y install libzip-dev
+RUN  docker-php-ext-install zip

@@ -1,13 +1,24 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../../axios-client.js";
-import { Link } from "react-router-dom";
+
 import { useStateContext } from "../../context/ContextProvider.jsx";
+import PopupBox from '../views/popupbox/edit_category.jsx';
+import { Button, Spinner, Table, Row, Col, Pagination } from 'react-bootstrap'; 
 
 export default function CategoryList({ categoryFlag, setCategoryFlag }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const { setNotification } = useStateContext();
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const handleShow = (category) => {
+    setSelectedCategory(category);
+    setShowPopup(true);
+  };
+
+  const handleClose = () => setShowPopup(false);
 
   useEffect(() => {
     fetchCategories();
@@ -20,7 +31,6 @@ export default function CategoryList({ categoryFlag, setCategoryFlag }) {
       .then(({ data }) => {
         setLoading(false);
         setCategories(data);
-        //setCategoryFlag(false);
       })
       .catch(() => {
         setLoading(false);
@@ -31,82 +41,65 @@ export default function CategoryList({ categoryFlag, setCategoryFlag }) {
     const url = new URL(link);
     fetchCategories(url.searchParams.get("page"));
   };
-  const renderPaginationLinks = () => {
-    if (categories.data) {
-      console.log(categories.meta);
-      if (categories.meta) {
-        console.log(categories.meta);
-      }
-    }
 
-    return (
-      <>
-        {categories.data &&
-          categories.meta &&
-          categories.meta.links?.map((link, index) => (
-            <button
-              key={index}
-              onClick={(ev) => fetchNextPrevTasks(link.url)}
-              className="btn btn-primary"
-            >
-              <label dangerouslySetInnerHTML={{ __html: link.label }}></label>
-            </button>
-          ))}
-      </>
-    );
+  const renderPaginationLinks = () => {
+    if (categories.data && categories.meta) {
+      return categories.meta.links.map((link, index) => (
+        <Button
+          key={index}
+          onClick={() => fetchNextPrevTasks(link.url)}
+          dangerouslySetInnerHTML={{ __html: link.label }}
+          className="m-1"
+        />
+      ));
+    }
   };
 
   return (
-    <>
-      <table className="bordered-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        {loading && (
-          <tbody>
-            <tr>
-              <td className="text-center" colSpan="3">
-                Loading...
-              </td>
-            </tr>
-          </tbody>
-        )}
-        {categories.data && (
-          <tbody>
-            {categories.data.map((category) => (
-              <tr key={category.category_id} className="left-aligned-row">
-                <td>{category.category_id}</td>
-                <td>{category.category_name}</td>
-                <td>
-                  <button className="btn-edit">Edit</button>
-                  <button
-                    className="btn-delete"
-                    onClick={(ev) => onDeleteClick(category)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        )}
-      </table>
-
-      <div
-        style={{
-          display: "flex-1",
-          justifyContent: "space-between",
-          flexDirection: "row",
-          alignItems: "stretch",
-          height: "100vh",
-        }}
-      >
-        {renderPaginationLinks()}
-      </div>
-    </>
-  );
+ 
+   
+      <>
+        <PopupBox show={showPopup} handleClose={handleClose} categoryData={selectedCategory} />
+        <Row>
+          <Col>
+            <table className="table table-bordered">
+              <thead className="thead-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td className="text-center" colSpan="3">
+                      <Spinner animation="border" />
+                    </td>
+                  </tr>
+                ) : (
+                  categories.data && (
+                    categories.data.map((category) => (
+                      <tr key={category.category_id}>
+                        <td>{category.category_id}</td>
+                        <td>{category.category_name}</td>
+                        <td>
+                          <Button variant="warning" onClick={() => handleShow(category)}>Edit</Button>{' '}
+                          <Button variant="danger" onClick={() => onDeleteClick(category)}>Delete</Button>
+                        </td>
+                      </tr>
+                    ))
+                  )
+                )}
+              </tbody>
+            </table>
+          </Col>
+        </Row>
+        <Row className="justify-content-center mt-3">
+          <Col>
+            {renderPaginationLinks()}
+          </Col>
+        </Row>
+      </>
+    );
 }

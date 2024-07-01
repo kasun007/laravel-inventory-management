@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Http\Resources\CategoryResource;
 use App\Interfaces\CategoryRepositoryInterface;
 use App\Models\Category;
-
+use App\Exceptions\CategoryNotFoundException;
 class CategoryRepository implements CategoryRepositoryInterface
 {
 
@@ -26,9 +26,6 @@ class CategoryRepository implements CategoryRepositoryInterface
 
         return $categories;
 
-
-
-
     }
 
     public function create(array $data)
@@ -37,21 +34,13 @@ class CategoryRepository implements CategoryRepositoryInterface
         return $category;
     }
 
-    public function update(array $data, $id)
-    {
-
-
-        // If the data is valid, proceed with the update
+    public function update(array $data, $id){
         $category = Category::find($id);
-
-        if ($category) {
-            $category->update($data);
-            return "Category updated successfully!";
+        if (!$category) {
+              throw new CategoryNotFoundException();
         }
-
-        return "Category not found!";
-
-
+        $category->update($data);
+        return $category;
     }
 
     public function delete($id)

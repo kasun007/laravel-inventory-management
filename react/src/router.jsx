@@ -8,6 +8,9 @@ import DashboardLayout from "./assets/views/DashboardLayout.jsx";
 import SignUp from "./assets/views/SignUp.jsx";
 import UserForm from "./assets/views/UserForm.jsx";
 import Category from "./assets/views/Category.jsx";
+ 
+import Invoice from "./assets/views/invoice.jsx";
+ 
 
 const router = createBrowserRouter([
   {
@@ -38,6 +41,12 @@ const router = createBrowserRouter([
         path: "/category",
         element: <Category />,
       },
+
+      {
+        path: "/invoice",
+        element: <Invoice/>,
+      },
+      
     ],
   },
 

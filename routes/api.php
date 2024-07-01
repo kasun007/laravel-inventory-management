@@ -27,7 +27,7 @@ Route::middleware(['XSS','auth:sanctum' ,RoleCheckMiddleware::class . ':admin'])
     });
 
     Route::apiResource("/users", UserController::class);
-    Route::apiResource("/categories", CategoryController::class);
+    Route::apiResource("/categories",CategoryController::class);
     Route::apiResource("/items",  ItemController::class);
 });
 
@@ -38,9 +38,6 @@ Route::post("/logout",[\App\Http\Controllers\Api\AuthController::class,'logout']
 Route::group(['middleware' => ['XSS']], function () {
     Route::post("/signup",[\App\Http\Controllers\Api\AuthController::class,'signup']);
     Route::post("/login",[\App\Http\Controllers\Api\AuthController::class,'login']);
-
-
-
 });
 
 

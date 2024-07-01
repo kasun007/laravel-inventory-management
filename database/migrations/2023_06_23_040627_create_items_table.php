@@ -13,16 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->bigInteger("id")->autoIncrement();
             $table->timestamps();
-            $table->string('item_name', 1000);
-            $table->string('item_slug', 1000);
-            $table->string('item_description', 1000);
-            $table->string('item_price', 1000);
-            $table->string('item_image', 1000);
-            $table->bigInteger('item_category');
-            $table->foreign('item_category')->references('id')->on('categories');
+            $table->string('product_name', 1000);
+            $table->string('product_slug', 1000);
+            $table->string('product_description', 1000);
+            $table->string('product_price', 1000);
+            $table->string('selling_price', 1000);
+
+
+            $table->string('product_image', 1000);
+            $table->bigInteger('product_category');
+            $table->foreign('product_category')->references('id')->on('categories');
         });
     }
 

@@ -8,6 +8,7 @@ use App\Interfaces\CategoryRepositoryInterface;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Exceptions\CategoryNotFoundException;
 
 class CategoryController extends Controller
 {
@@ -27,6 +28,8 @@ class CategoryController extends Controller
 
     public function store(CategoryRequest $request)
     {
+
+      
         $category = $this->categoryRepository->create($request->validated());
         return response()->json(new CategoryResource($category), 201);
     }
@@ -38,11 +41,19 @@ class CategoryController extends Controller
         return response()->json(new CategoryResource($category), 200);
     }
 
-    public  function  update(CategoryRequest $request, $id)
+    public  function  update(CategoryRequest $request, $category)
     {
-        $category = $this->categoryRepository->update($request->validated(), $id);
-        return response()->json(new CategoryResource($category), 200);
-    }
+        
+        try {
+            $category = $this->categoryRepository->update($request->validated(), $category);
+        } catch (CategoryNotFoundException $exception) {
+            return response()->json([
+                'error' => 'Category Not Found',
+                'message' => $exception->getMessage()
+            ], 404);
+        }
+         
+   }
 
     public  function  destroy($id)
     {

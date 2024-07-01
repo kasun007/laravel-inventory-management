@@ -1,0 +1,6 @@
+projectKey=EuricoLabs_laravel-inventory-management_AYkGuMhcQkkJpsEOtIyx
+serverUrl=http://0.0.0.0:9001
+serverVersion=10.1.0.73491
+dashboardUrl=http://0.0.0.0:9001/dashboard?id=EuricoLabs_laravel-inventory-management_AYkGuMhcQkkJpsEOtIyx
+ceTaskId=AYk1Wsypl35OMXcyiZjm
+ceTaskUrl=http://0.0.0.0:9001/api/ce/task?id=AYk1Wsypl35OMXcyiZjm
