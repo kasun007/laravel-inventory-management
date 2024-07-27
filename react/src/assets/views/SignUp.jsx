@@ -2,6 +2,9 @@ import axiosClient from "../../axios-client.js";
 import { useStateContext } from "../../context/ContextProvider.jsx";
 import { createRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Card, Form, Button, Alert, Container } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 export default function Signup() {
   const nameRef = createRef();
   const emailRef = createRef();
@@ -37,31 +40,55 @@ export default function Signup() {
   };
 
   return (
-    <div className="login-signup-form animated fadeInDown">
-      <div className="form">
-        <form onSubmit={onSubmit}>
-          <h1 className="title">Signup for Free</h1>
+    <Container className="d-flex align-items-center justify-content-center min-vh-100">
+      <Card className="p-4" style={{ maxWidth: "500px", width: "100%" }}>
+        <Card.Body>
+          <h1 className="text-center mb-4">Signup for Free</h1>
           {errors && (
-            <div className="alert">
+            <Alert variant="danger">
               {Object.keys(errors).map((key) => (
                 <p key={key}>{errors[key][0]}</p>
               ))}
-            </div>
+            </Alert>
           )}
-          <input ref={nameRef} type="text" placeholder="Full Name" />
-          <input ref={emailRef} type="email" placeholder="Email Address" />
-          <input ref={passwordRef} type="password" placeholder="Password" />
-          <input
-            ref={passwordConfirmationRef}
-            type="password"
-            placeholder="Repeat Password"
-          />
-          <button className="btn btn-block">Signup</button>
-          <p className="message">
+          <Form onSubmit={onSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Control
+                ref={nameRef}
+                type="text"
+                placeholder="Full Name"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Control
+                ref={emailRef}
+                type="email"
+                placeholder="Email Address"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Control
+                ref={passwordRef}
+                type="password"
+                placeholder="Password"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Control
+                ref={passwordConfirmationRef}
+                type="password"
+                placeholder="Repeat Password"
+              />
+            </Form.Group>
+            <Button type="submit" variant="primary" className="w-100">
+              Signup
+            </Button>
+          </Form>
+          <p className="text-center mt-3">
             Already registered? <Link to="/login">Sign In</Link>
           </p>
-        </form>
-      </div>
-    </div>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 }

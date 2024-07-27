@@ -41,24 +41,36 @@ export default function Login() {
   };
 
   return (
-    <div className="login-signup-form animated fadeInDown">
-      <div className="form">
-        <form onSubmit={onSubmit}>
-          <h1 className="title"> Login into your account</h1>
-          {errors && (
-            <div className="alert">
-              {Object.keys(errors).map((key) => (
-                <p key={key}>{errors[key][0]}</p>
-              ))}
+    <div className="container" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <div className="row justify-content-center">
+        <div className="col-md-29"> {/* Increase the width to col-md-8 */}
+          <div className="card">
+            <div className="card-body">
+              <h1 className="card-title">Login into your account</h1>
+              {errors && (
+                <div className="alert alert-danger">
+                  {Object.keys(errors).map((key) => (
+                    <p key={key}>{errors[key][0]}</p>
+                  ))}
+                </div>
+              )}
+              <form onSubmit={onSubmit}>
+                <div className="form-group">
+                  <label>Email</label>
+                  <input ref={emailRef} type="email" className="form-control" placeholder="Enter email" />
+                </div>
+                <div className="form-group">
+                  <label>Password</label>
+                  <input ref={passwordRef} type="password" className="form-control" placeholder="Enter password" />
+                </div>
+                <button type="submit" className="btn btn-primary" style={{ marginTop: "10px" }}>Login</button> {/* Add marginTop style */}
+              </form>
+              <p className="message">
+                Not Registered <Link to="/signup">Create an account</Link>
+              </p>
             </div>
-          )}
-          <input ref={emailRef} type="email" placeholder="Email" />
-          <input ref={passwordRef} type="password" placeholder="Password" />
-          <button className="btn btn-block">Login</button>
-          <p className="message">
-            Not Registered <Link to="/signup">Create an account</Link>
-          </p>
-        </form>
+          </div>
+        </div>
       </div>
     </div>
   );
