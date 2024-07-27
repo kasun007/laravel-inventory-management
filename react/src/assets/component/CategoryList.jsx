@@ -29,6 +29,7 @@ export default function CategoryList({ categoryFlag, setCategoryFlag }) {
     axiosClient
       .get("/categories/", { params: { page } })
       .then(({ data }) => {
+        console.log("data", data);
         setLoading(false);
         setCategories(data);
       })

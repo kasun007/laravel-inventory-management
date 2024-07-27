@@ -21,10 +21,20 @@ class CategoryController extends Controller
         $this->categoryRepository = $categoryRepository;
     }
 
-    public function index()
-    {
+    public function index(){
+     
         return CategoryResource::collection($this->categoryRepository->all());
     }
+
+
+    public function getAllCategories()
+    {
+        // Fetch all categories without pagination
+        $categories = $this->categoryRepository->allWithoutPagination();
+
+        return response()->json($categories, 200);
+    }
+
 
     public function store(CategoryRequest $request)
     {
@@ -41,19 +51,27 @@ class CategoryController extends Controller
         return response()->json(new CategoryResource($category), 200);
     }
 
-    public  function  update(CategoryRequest $request, $category)
-    {
-        
-        try {
-            $category = $this->categoryRepository->update($request->validated(), $category);
-        } catch (CategoryNotFoundException $exception) {
-            return response()->json([
-                'error' => 'Category Not Found',
-                'message' => $exception->getMessage()
-            ], 404);
-        }
-         
-   }
+    public function update(CategoryRequest $request, $category)
+{
+    try {
+        $category = $this->categoryRepository->update($request->validated(), $category);
+    } catch (CategoryNotFoundException $exception) {
+        return response()->json([
+            'error' => 'Category Not Found',
+            'message' => $exception->getMessage()
+        ], 404);
+    } catch (\Illuminate\Database\QueryException $exception) {
+        return response()->json([
+            'error' => 'Database Error',
+            'message' => $exception->getMessage()
+        ], 500);
+    } catch (\Exception $exception) {
+        return response()->json([
+            'error' => 'Unexpected Error',
+            'message' => $exception->getMessage()
+        ], 500);
+    }
+}
 
     public  function  destroy($id)
     {

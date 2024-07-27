@@ -1,0 +1,16 @@
+.custom-card {
+    border: none;
+    box-shadow: none;
+  }
+  
+  .custom-input {
+    border: none;
+    border-bottom: 1px solid #ced4da;
+    border-radius: 0;
+  }
+  
+  .custom-input:focus {
+    border-bottom: 1px solid #80bdff;
+    box-shadow: none;
+  }
+  

@@ -28,6 +28,13 @@ class CategoryRepository implements CategoryRepositoryInterface
 
     }
 
+
+
+    function allWithoutPagination()
+    {
+        return Category::all();
+    }
+
     public function create(array $data)
     {
         $category = Category::create($data);

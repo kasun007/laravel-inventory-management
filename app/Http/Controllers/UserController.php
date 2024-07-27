@@ -41,12 +41,10 @@ class UserController extends Controller
      * @param Request $request
      *
      */
-    public function store(StoreRequest $request)
-    {
+    public function store(StoreRequest $request){
+        
         $data = $request->validated();  // validated() is a method of FormRequest class
         $data['password'] = bcrypt($data['password']);
-
-
         $user = $this->userRepository->create($data);
         return \response(new UserResource($user), Response::HTTP_CREATED); // return the user as a resource
 

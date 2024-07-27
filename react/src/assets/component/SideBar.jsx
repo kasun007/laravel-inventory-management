@@ -78,12 +78,20 @@ const Sidebar = () => {
             <FontAwesomeIcon icon={faThumbsUp} />
           </button>
         </Link>
-        <Link to="/test">
-          Test
+        <Link to="/items">
+        Items
           <button className="like-button">
             <FontAwesomeIcon icon={faThumbsUp} />
           </button>
         </Link>
+
+        <Link to="/supplier">
+        Supplier
+          <button className="like-button">
+            <FontAwesomeIcon icon={faThumbsUp} />
+          </button>
+        </Link>
+
       </aside>
     </StyledSidebar>
   );

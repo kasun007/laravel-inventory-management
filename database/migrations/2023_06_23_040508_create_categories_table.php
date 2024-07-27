@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->bigInteger("id")->autoIncrement();
-
             $table->string('category_name', 10000);
             $table->string('category_slug', 100);
             $table->string('category_description', 1000);
@@ -25,6 +24,8 @@ return new class extends Migration
 
 
         });
+
+        
     }
 
     /**
@@ -34,6 +35,18 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categories');
+        
+      
+        if (Schema::hasTable('products')) {
+            // Use raw SQL to drop the foreign key constraint
+            DB::statement('ALTER TABLE products DROP CONSTRAINT IF EXISTS products_product_category_foreign');
+        }
+
+        // Use raw SQL to drop the categories table with CASCADE
+        DB::statement('DROP TABLE IF EXISTS categories CASCADE');
+
+    
+      
+        
     }
 };

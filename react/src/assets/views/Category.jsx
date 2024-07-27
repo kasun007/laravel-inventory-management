@@ -12,8 +12,7 @@ export default function Category() {
   const [category_flag, setCategoryFlag] = useState(false);
 
   const onSubmit = (ev) => {
-    alert("onSubmit");
-    console.log("onSubmit");
+    
     ev.preventDefault();
 
     const payload = {
