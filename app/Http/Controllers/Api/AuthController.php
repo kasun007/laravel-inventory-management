@@ -34,7 +34,6 @@ class AuthController extends Controller
     {
 
         //bypass the validation
-
         $credentials = $request->validated();
         if (!Auth::attempt($credentials)) {
             return response([

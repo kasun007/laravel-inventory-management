@@ -13,7 +13,7 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
 
 
-        $categories = Category::paginate(12);
+        $categories = Category::paginate(2);
 
         // Iterate over each category and decode HTML entities for all attributes
         $categories->getCollection()->transform(function ($category) {

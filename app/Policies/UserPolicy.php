@@ -24,7 +24,7 @@ class UserPolicy
 
     public function create($user)
     {
-        return $user->role === UserRole::ADMIN; //Only allow admins to create posts
+        return $user->role === UserRole::ADMIN; //Only allow admins to create po ts
 
     }
 }

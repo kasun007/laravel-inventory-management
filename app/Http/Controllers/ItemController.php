@@ -45,6 +45,7 @@ class ItemController extends Controller{
 
 
     public function get_all_items(){
+        
         return $this->itemRepository->get_all_items();
     }
 

@@ -39,6 +39,7 @@ export default function CategoryList({ categoryFlag, setCategoryFlag }) {
   };
 
   const fetchNextPrevTasks = (link) => {
+   
     const url = new URL(link);
     fetchCategories(url.searchParams.get("page"));
   };

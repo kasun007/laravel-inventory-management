@@ -21,20 +21,56 @@ const ItemForm = () => {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]); // State for categories
-
   const [suppliers, setSuppliers] = useState([]); // State for suppliers
+
   useEffect(() => {
     fetchItems();
     fetchCategories(); // Fetch categories on component mount
     fetchSuppliers(); // Fetch suppliers on component mount
   }, []);
 
-  const fetchItems = () => {
+
+
+  const fetchNextPrevTasks = (link) => {
+   
+    const url = new URL(link);
+    
+    fetchItems(url.searchParams.get("page"));
+  };
+
+  const renderPaginationLinks = () => {
+   
+  
+    if (items.data && items.meta) {
+      return items.meta.links.map((link, index) => (
+        <Button
+          key={index}
+          onClick={() => fetchNextPrevTasks(link.url)}
+          dangerouslySetInnerHTML={{ __html: link.label }}
+          className="m-1"
+        />
+      ));
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+  const fetchItems = (page = 1) => {
+ 
     setLoading(true);
-    axiosClient.get("/items")
+    axiosClient.get("/items",{ params: { page } })
       .then(({ data }) => {
-        if (data && data.data) {
-          setItems(data.data); // Accessing the items array correctly
+        if (data ) {
+          setItems(data); // Accessing the items array correctly
         } else {
           setItems([]);
         }
@@ -70,6 +106,8 @@ const ItemForm = () => {
         console.error("Error fetching suppliers", err);
       });
   };
+
+
   const addItem = (values, { resetForm }) => {
     const newItem = {
       itemName: values.itemName,
@@ -90,10 +128,7 @@ const ItemForm = () => {
     setItems(updatedItems);
   };
 
-  const handleSubmit = () => {
-    // Here you can handle form submission logic (e.g., send to backend)
-    console.log('Invoice items:', items);
-  };
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -214,8 +249,8 @@ const ItemForm = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {items.length > 0 ? (
-                    items.map((item, index) => (
+                  { items.data && items.data.length > 0 ? (
+                    items.data.map((item, index) => (
                       <tr key={index}>
                         <td>{item.item_name}</td>
                         <td>{item.item_price}</td>
@@ -235,9 +270,15 @@ const ItemForm = () => {
                   )}
                 </tbody>
               </Table>
-              <Button variant="primary" onClick={handleSubmit}>Submit </Button>
+
             </Card.Body>
           </Card>
+        </Col>
+      </Row>
+
+      <Row className="justify-content-center mt-3">
+        <Col>
+          {renderPaginationLinks()}
         </Col>
       </Row>
     </Container>

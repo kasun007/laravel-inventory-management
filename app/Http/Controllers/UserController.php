@@ -42,12 +42,11 @@ class UserController extends Controller
      *
      */
     public function store(StoreRequest $request){
-        
-        $data = $request->validated();  // validated() is a method of FormRequest class
-        $data['password'] = bcrypt($data['password']);
-        $user = $this->userRepository->create($data);
-        return \response(new UserResource($user), Response::HTTP_CREATED); // return the user as a resource
 
+        return response()->json([
+            'message' => 'User not found'
+        ]);
+        
     }
 
     /**
@@ -61,6 +60,7 @@ class UserController extends Controller
 
         try {
            return new UserResource($this->userRepository->show($id)); // return the user as a resource
+
         } catch (ModelNotFoundException $modelNotFoundException) {
             return response()->json([
                 'message' => 'User not found'

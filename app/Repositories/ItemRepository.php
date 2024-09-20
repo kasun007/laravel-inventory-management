@@ -14,7 +14,7 @@ class ItemRepository implements ItemRepositoryInterface
     {
         // Eager load the category and supplier relationships
         
-        $items = Item::with('category', 'supplier')->paginate(12);
+        $items = Item::with('category', 'supplier')->paginate(3);
 
         // Iterate over each item and decode HTML entities for all attributes
         $items->getCollection()->transform(function ($item) {
@@ -50,6 +50,7 @@ class ItemRepository implements ItemRepositoryInterface
 
     public function get_all_items()
     {
+
         $item = Item::all();
         return response()->json($item, Response::HTTP_OK);
     }

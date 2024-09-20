@@ -41,7 +41,7 @@ export default function Login() {
   };
 
   return (
-    <div className="container" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+    <div className="container" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", backgroundColor: "lightpurple" }}>
       <div className="row justify-content-center">
         <div className="col-md-29"> {/* Increase the width to col-md-8 */}
           <div className="card">
