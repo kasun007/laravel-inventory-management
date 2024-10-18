@@ -3,9 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreInvoiceRequest;
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\StoreInvoiceRequest;
 use App\Interfaces\InvoiceRepositoryInterface;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
+use PDF;
+use Illuminate\Support\Facades\Response;
 
 class InvoiceController extends Controller
 {
@@ -22,7 +28,7 @@ class InvoiceController extends Controller
         $latestId = Invoice::orderBy('id', 'desc')->value('id');
 
         if (!$latestId) {
-            return response()->json(['error' => 'No invoices found.'], 404);
+            return response()->json(1, 200);
         }
 
         return response()->json($latestId + 1, 200);
@@ -38,6 +44,7 @@ class InvoiceController extends Controller
     public function store(StoreInvoiceRequest $request)
     {
         $invoice = $this->invoiceRepository->store($request->validated());
+        // generatePdf($invoice);
         return response()->json($invoice, 201);
     }
 
@@ -69,21 +76,65 @@ class InvoiceController extends Controller
     // Attach items to an invoice
     public function attachItems(Request $request, Invoice $invoice)
     {
+        \Log::info('Request Data:', $request->all());
+
         $validatedData = $request->validate([
-            'items' => 'required|array',
-            'items.*.id' => 'required|exists:items,id',
-            'items.*.price' => 'required|numeric',
-            'items.*.quantity' => 'required|integer',
+            'invoiceItems.items' => 'required|array',
+            'invoiceItems.items.*.id' => 'required|exists:items,id',
+            'invoiceItems.items.*.price' => 'required|numeric',
+            'invoiceItems.items.*.quantity' => 'required|integer',
         ]);
 
-        $items = collect($validatedData['items'])->mapWithKeys(function ($item) {
+        $items = collect($validatedData['invoiceItems']['items'])->mapWithKeys(function ($item) {
             return [$item['id'] => ['price' => $item['price'], 'quantity' => $item['quantity']]];
         });
 
         $invoice->items()->syncWithoutDetaching($items);
+        $this->generatePdf($invoice);
 
-
-         
-        return response()->json($invoice->load('items'), Response::HTTP_OK);
+        return response()->json($invoice, 200);
     }
+
+   
+    // Generate a PDF for an invoice
+   
+
+public function generatePdf(Invoice $invoice)
+{
+
+    \Log::info('Generating PDF for Invoice:', [
+        'invoice_id' => $invoice->id,
+        'customer_id' => $invoice->customer_id,
+        'total_amount' => $invoice->total_amount,
+        'items' => $invoice->items->toArray()
+    ]);
+   
+        // Calculate total amount
+       
+
+        // Load related items for the invoice
+        $invoice->load('items');
+
+        // Generate PDF using the 'invoices.pdf' Blade view
+        $pdf = PDF::loadView('invoice',compact('invoice'));
+        // Define the path where the PDF will be saved
+        $path = storage_path('app/public/invoices/invoice_' . $invoice->id . '.pdf');
+
+        
+        // Save the PDF to the defined path
+        $pdf->save($path);
+        
+        // Optionally, you can return a response indicating success
+        return response()->json([
+            'message' => 'Invoice PDF generated and saved successfully.',
+            'path' => $path
+        ]);
+        
+
+   
+        // Log the error for debugging
+       
+    
 }
+}
+ 

@@ -38,17 +38,17 @@ const Supplier = () => {
         onSubmit: (values, { resetForm }) => {
             console.log(values);
             const newSupplier = {
-                name: values.name,
-                address: values.address,
-                mobileNumber: values.mobileNumber,
-                email: values.email,
+                supplier_name: values.name,
+                supplier_address: values.address,
+                supplier_phone: values.mobileNumber,
+                supplier_email: values.email,
             };
-
+ 
             setSuppliers([...suppliers, newSupplier]);
-            axiosClient.post("/suppliers", newSupplier)
-                .then(({ data }) => {
-                    setErrors(null);
-                })
+            axiosClient.post("/suppliers", newSupplier).then(({ data }) => {
+                  
+                    console.log(data);
+            })
                 .catch((err) => {
                     const response = err.response;
 
@@ -59,6 +59,7 @@ const Supplier = () => {
                             setErrors({ message: [response.data.message] });
                         }
                     }
+
                 });
 
             resetForm();
@@ -67,8 +68,7 @@ const Supplier = () => {
 
     useEffect(() => {
         // Fetch suppliers data from the server
-        axiosClient.get("/supplier-show-all")
-            .then(({ data }) => {
+        axiosClient.get("/supplier-show-all").then(({ data }) => {
                 console.log(data);
                 setSuppliers(data);
             })

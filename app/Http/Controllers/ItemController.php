@@ -28,14 +28,27 @@ class ItemController extends Controller{
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'price' => 'required|numeric',
-        ]);
-
-        $item = Item::create($request->all());
-
-        return response()->json($item, 201);
+        try {
+            $request->validate([
+                'item_name' => 'required|string',
+                'item_price' => 'required|numeric',
+            ]);
+    
+            $item = Item::create($request->all());
+           
+    
+            return response()->json($item, 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation error',
+                'errors' => $e->validator->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while creating the item.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function show(Item $item)

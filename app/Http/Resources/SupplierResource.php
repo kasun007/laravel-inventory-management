@@ -16,10 +16,10 @@ class SupplierResource extends JsonResource
     {
         return [
           
-            'name' => $this->name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'address' => $this->address,
+            'supplier_name' => $this->supplier_name,
+            'supplier_address' => $this->supplier_address,
+            'supplier_phone' => $this->supplier_phone,
+            'supplier_email' => $this->supplier_email,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

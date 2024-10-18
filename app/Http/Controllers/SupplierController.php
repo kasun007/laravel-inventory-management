@@ -29,15 +29,16 @@ class SupplierController extends Controller
         return new SupplierResource($this->supplierRepository->getById($id));
     }
     
-    public function store(SupplierRequest $request)
+    public function store(SupplierRequest $request) {
 
+        
     
-    {
 
-        $data = $request->validated(); 
-        $user = $this->supplierRepository->create($data);
-        \Log::info('User created',$data);
-        return \response(new SupplierResource($user), Response::HTTP_CREATED);
+        
+        $supplier = $this->supplierRepository->create($request->validated());
+      return  ray($supplier);
+      
+      //  return \response(new SupplierResource($supplier), Response::HTTP_CREATED);
    
 
       

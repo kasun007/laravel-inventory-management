@@ -18,11 +18,11 @@ const Invoice = () => {
   const [items, setItems] = useState([]);
   const [item_names, setItemNames] = useState([]);
   const [invoiceNumber, setInvoiceNumber] = useState('');
+  const [selectedItemPrice, setSelectedItemPrice] = useState(0);
 
   useEffect(() => {
     axiosClient.get("/item-all")
       .then(({ data }) => {
-        console.log(data);
         setItemNames(data);
       })
       .catch((error) => {
@@ -41,9 +41,7 @@ const Invoice = () => {
   }, []);
 
   const addItem = (values, { resetForm }) => {
-    console.log('addItem called with values:', values);
     const selectedItem = item_names.find(item => item.id === parseInt(values.item));
- 
 
     const newItem = {
       item: values.item,
@@ -52,9 +50,16 @@ const Invoice = () => {
       quantity: values.quantity,
       total: (values.price * values.quantity) - (values.price * values.quantity * values.totalDiscountPercentage / 100),
     };
-    console.log('addItem called with values:', newItem);
+    
     setItems([...items, newItem]);
     resetForm();
+  };
+
+  const handleItemChange = (event, setFieldValue) => {
+    const selectedItem = item_names.find(item => item.id === parseInt(event.target.value));
+    if (selectedItem) {
+      setFieldValue('price', selectedItem.item_price); // Update price field
+    }
   };
 
   const deleteItem = (index) => {
@@ -65,36 +70,33 @@ const Invoice = () => {
 
   const fullTotal = items.reduce((acc, curr) => acc + curr.total, 0);
 
+  const createInvoice = async () => {
+    try {
+      const invoiceData = {
+        total_amount: fullTotal,
+      };
+      const response = await axiosClient.post("/invoices", invoiceData);
+      console.log('Invoice created:', response.data.id);
+
+      const invoiceItems = {
+        items: items.map(item => ({
+          id: item.item,
+          price: item.price,
+          quantity: item.quantity
+        }))
+      };
+
+      var invoiceId = response.data.id;
+      const t = await axiosClient.post(`/invoices/${invoiceId}/items`, { invoiceItems });
+      console.log('Invoice items:', t);
+
+    } catch (error) {
+      console.error('Error creating invoice:', error);
+    }
+  };
+
   const handleSubmit = () => {
-    const invoiceData = {
-      total_amount: fullTotal,
-    };
-
-    const invoiceItems = {
-      items: items.map(item => ({
-        id: item.item,
-        price: item.price,
-        quantity: item.quantity
-      }))
-    };
-
-    
-
-    axiosClient.post("/invoices", invoiceData)
-    .then(({ data, status }) => {
-      console.log('Invoice creation response:', data, 'Status:', status);
-      // Post invoice items data
-      if (status === 201) {
-         alert('Invoice created successfully');
-        setItems([]);
-      }
-
-      
-    })
-    
-    .catch((error) => {
-      console.error('There was an error creating the invoice!', error);
-    });
+    createInvoice();
   };
 
   return (
@@ -117,15 +119,23 @@ const Invoice = () => {
                 onSubmit={addItem}
                 enableReinitialize
               >
-                {({ handleSubmit }) => (
+                {({ handleSubmit, setFieldValue }) => (
                   <FormikForm onSubmit={handleSubmit}>
                     <Row className="mb-3">
                       <Col>
                         <Form.Group controlId="formItemName">
                           <Form.Label>Item Name</Form.Label>
-                          <Field name="item" as="select" className="form-control">
+                          <Field 
+                            name="item" 
+                            as="select" 
+                            className="form-control" 
+                            onChange={e => { 
+                              setFieldValue('item', e.target.value);
+                              handleItemChange(e, setFieldValue);
+                            }}
+                          >
                             <option value="">Choose...</option>
-                            {item_names.map((item, index) => (
+                            {item_names.map((item) => (
                               <option key={item.id} value={item.id}>{item.item_name}</option>
                             ))}
                           </Field>

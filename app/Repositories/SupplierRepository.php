@@ -23,9 +23,10 @@ class SupplierRepository implements SupplierRepositoryInterface{
         return Supplier::find($id);
     }
 
-    public function create(array $data): Supplier
+    public function create(array $data)
     {
-        return Supplier::create($data);
+        $supplier = Supplier::create($data);
+        return $supplier;
     }
 
     public function update(int $id, array $data): bool

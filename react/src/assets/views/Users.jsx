@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../../axios-client.js";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useStateContext } from "../../context/ContextProvider.jsx";
 import { Button, Spinner } from "react-bootstrap";
 
@@ -8,6 +8,7 @@ export default function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const { setNotification } = useStateContext();
+  const navigate = useNavigate();  // Use navigate instead of Link
 
   useEffect(() => {
     getUsers();
@@ -19,7 +20,7 @@ export default function Users() {
     }
     axiosClient.delete(`/users/${user.id}`).then(() => {
       setNotification("User was successfully deleted");
-      getUsers();
+        // Reload the users list once
     });
   };
 
@@ -36,6 +37,8 @@ export default function Users() {
       });
   };
 
+ 
+
   return (
     <div>
       <div
@@ -43,7 +46,7 @@ export default function Users() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: "20px", // Optional: Add margin at the top
+          marginBottom: "20px",
         }}
       >
         <h1>Users</h1>
@@ -51,7 +54,7 @@ export default function Users() {
           Add new
         </Link>
       </div>
-      <div >
+      <div>
         <table className="table">
           <thead>
             <tr>
@@ -78,10 +81,12 @@ export default function Users() {
                   <td>{u.created_at}</td>
                   <td>
                     <div className="d-flex flex-column">
-                      <Button variant="warning" className="mb-2">
-                        <Link to={`/users/${u.id}`} className="text-white">
-                          Edit
-                        </Link>
+                      <Button
+                        variant="warning"
+                        className="mb-2"
+                        onClick={() => handleEdit(u.id)} // Use onClick to trigger navigation
+                      >
+                        Edit
                       </Button>
                       <Button variant="danger" onClick={() => onDeleteClick(u)}>
                         Delete
